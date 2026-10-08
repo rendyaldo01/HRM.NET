@@ -64,4 +64,51 @@ public class EmployeesController : Controller
 
         return View(employee);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        var employee = await _employeeService.GetByIdAsync(id);
+
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        var request = new CreateEmployeeRequest
+        {
+            EmployeeNumber = employee.EmployeeNumber,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Email = employee.Email,
+            HireDate = employee.HireDate
+        };
+
+        return View(request);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(
+    Guid id,
+    CreateEmployeeRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            ViewBag.EmployeeId = id;
+            return View(request);
+        }
+
+        try
+        {
+            await _employeeService.UpdateAsync(id, request);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(
+            nameof(Details),
+            new { id });
+    }
 }

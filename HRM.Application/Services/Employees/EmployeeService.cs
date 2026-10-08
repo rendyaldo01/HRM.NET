@@ -73,7 +73,8 @@ public class EmployeeService : IEmployeeService
         employee.Update(
             request.FirstName,
             request.LastName,
-            request.Email);
+            request.Email,
+            request.HireDate);
 
         await _employeeRepository.UpdateAsync(employee);
     }
@@ -90,6 +91,13 @@ public class EmployeeService : IEmployeeService
         }
 
         await _employeeRepository.DeleteAsync(employee);
+    }
+
+    public async Task<int> GetCountAsync()
+    {
+        var employees = await _employeeRepository.GetAllAsync();
+
+        return employees.Count;
     }
 
     private static EmployeeDto MapToDto(Employee employee)

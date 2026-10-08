@@ -37,11 +37,13 @@ public class Employee
     public void Update(
         string firstName,
         string lastName,
-        string email)
+        string email,
+        DateTime hireDate)
     {
         FirstName = firstName;
         LastName = lastName;
         Email = email;
+        HireDate = hireDate;
     }
 
     public void Activate()

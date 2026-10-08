@@ -87,11 +87,21 @@
                                         </td>
 
                                     <td class="text-end">
-                                        <a asp-action="Details"
-                                           asp-route-id="@employee.Id"
-                                           class="btn btn-sm btn-outline-primary">
-                                            Details
-                                        </a>
+                                        <div class="btn-group" role="group">
+
+                                            <a asp-action="Details"
+                                               asp-route-id="@employee.Id"
+                                               class="btn btn-sm btn-outline-primary">
+                                                Details
+                                            </a>
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@employee.Id"
+                                               class="btn btn-sm btn-outline-secondary">
+                                                Edit
+                                            </a>
+
+                                        </div>
                                     </td>
 
                                     </tr>

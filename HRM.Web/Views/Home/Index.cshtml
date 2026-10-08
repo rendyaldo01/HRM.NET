@@ -1,8 +1,126 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="mb-4">
+        <h1 class="h3 mb-1">HRM Dashboard</h1>
+
+        <p class="text-muted mb-0">
+            Human Resource Management System
+        </p>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <p class="text-muted mb-1">Employees</p>
+                            <h3 class="fw-bold mb-0">@ViewBag.EmployeeCount</h3>
+                        </div>
+
+                        <div class="text-primary fs-2">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Attendance
+                            </p>
+
+                            <h2 class="mb-0">
+                                0
+                            </h2>
+                        </div>
+
+                        <div class="text-success fs-2">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+                            <p class="text-muted mb-1">
+                                Leave Requests
+                            </p>
+
+                            <h2 class="mb-0">
+                                0
+                            </h2>
+                        </div>
+
+                        <div class="text-warning fs-2">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Quick Actions -->
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white">
+            <h5 class="mb-0">
+                Quick Actions
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <a asp-controller="Employees"
+               asp-action="Index"
+               class="btn btn-primary">
+
+                Manage Employees
+
+            </a>
+
+        </div>
+
+    </div>
+
 </div>

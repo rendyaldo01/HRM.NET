@@ -1,24 +1,23 @@
-using System.Diagnostics;
+using HRM.Application.Services.Employees;
 using Microsoft.AspNetCore.Mvc;
-using HRM.Web.Models;
 
 namespace HRM.Web.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private readonly IEmployeeService _employeeService;
+
+    public HomeController(IEmployeeService employeeService)
     {
-        return View();
+        _employeeService = employeeService;
     }
 
-    public IActionResult Privacy()
+    public async Task<IActionResult> Index()
     {
-        return View();
-    }
+        var employeeCount = await _employeeService.GetCountAsync();
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        ViewBag.EmployeeCount = employeeCount;
+
+        return View();
     }
 }
