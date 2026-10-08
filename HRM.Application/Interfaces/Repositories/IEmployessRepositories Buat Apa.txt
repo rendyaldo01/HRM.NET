@@ -1,0 +1,4 @@
+Repository adalah abstraction yang memberitahu Application Layer:
+"Saya butuh cara untuk mengambil dan menyimpan Employee."
+
+Tetapi Application tidak perlu tahu apakah datanya berasal dari SQL Server, PostgreSQL, API, atau database lain.
