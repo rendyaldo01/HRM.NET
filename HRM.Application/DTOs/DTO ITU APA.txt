@@ -1,0 +1,2 @@
+DTO = Data Transfer Object.
+Fungsinya memisahkan data yang keluar dari aplikasi dari Entity Domain.
