@@ -1,3 +1,4 @@
+using HRM.Application.Services.Departments;
 using HRM.Application.Services.Employees;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class DependencyInjection
         this IServiceCollection services)
     {
         services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<IDepartmentService, DepartmentService>();
 
         return services;
     }
