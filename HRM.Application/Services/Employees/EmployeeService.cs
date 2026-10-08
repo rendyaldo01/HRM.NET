@@ -93,6 +93,34 @@ public class EmployeeService : IEmployeeService
         await _employeeRepository.DeleteAsync(employee);
     }
 
+    public async Task ActivateAsync(Guid id)
+    {
+        var employee = await _employeeRepository.GetByIdAsync(id);
+
+        if (employee == null)
+        {
+            throw new KeyNotFoundException("Employee not found.");
+        }
+
+        employee.Activate();
+
+        await _employeeRepository.UpdateAsync(employee);
+    }
+
+    public async Task DeactivateAsync(Guid id)
+    {
+        var employee = await _employeeRepository.GetByIdAsync(id);
+
+        if (employee == null)
+        {
+            throw new KeyNotFoundException("Employee not found.");
+        }
+
+        employee.Deactivate();
+
+        await _employeeRepository.UpdateAsync(employee);
+    }
+
     public async Task<int> GetCountAsync()
     {
         var employees = await _employeeRepository.GetAllAsync();

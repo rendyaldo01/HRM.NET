@@ -14,4 +14,6 @@ public interface IEmployeeService
 
     Task DeleteAsync(Guid id);
     Task<int> GetCountAsync();
+    Task ActivateAsync(Guid id);
+    Task DeactivateAsync(Guid id);
 }
