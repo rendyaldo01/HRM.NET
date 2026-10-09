@@ -1,0 +1,60 @@
+@model HRM.Application.DTOs.Positions.PositionRequest
+
+@{
+    ViewData["Title"] = "Create Position";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <h2 class="mb-1">Create Position</h2>
+        <p class="text-muted mb-0">Add a new employee position.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <form asp-controller="Positions"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Code" class="form-label">Position Code</label>
+                    <input asp-for="Code"
+                           class="form-control"
+                           placeholder="e.g. POS001" />
+                    <span asp-validation-for="Code"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Position Name</label>
+                    <input asp-for="Name"
+                           class="form-control"
+                           placeholder="e.g. Software Developer" />
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a asp-controller="Positions"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Save Position
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

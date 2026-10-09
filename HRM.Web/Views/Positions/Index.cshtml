@@ -1,0 +1,105 @@
+@model IReadOnlyList<HRM.Application.DTOs.Positions.PositionDto>
+
+@{
+    ViewData["Title"] = "Positions";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Positions</h2>
+            <p class="text-muted mb-0">Manage employee positions.</p>
+        </div>
+
+        <a asp-controller="Positions" asp-action="Create" class="btn btn-primary"> 
+            <i class="bi bi-plus-lg me-1"></i> Add Position
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+                <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Position Name</th>
+                                <th>Status</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        No positions found.
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var position in Model)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@position.Code</td>
+                                        <td>@position.Name</td>
+                                        <td>
+                                            @if (position.IsActive)
+                                            {
+                                                <span class="badge bg-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">Inactive</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            <a asp-controller="Positions"
+                                               asp-action="Edit"
+                                               asp-route-id="@position.Id"
+                                               class="btn btn-sm btn-outline-primary">
+                                                Edit
+                                            </a>
+
+                                            @if (position.IsActive)
+                                            {
+                                                <form asp-controller="Positions"
+                                                      asp-action="Deactivate"
+                                                      asp-route-id="@position.Id"
+                                                      method="post"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Deactivate this position?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger">
+                                                        Deactivate
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Positions"
+                                                      asp-action="Activate"
+                                                      asp-route-id="@position.Id"
+                                                      method="post"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Activate this position?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-success">
+                                                        Activate
+                                                    </button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+</div>

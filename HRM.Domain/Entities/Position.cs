@@ -10,29 +10,25 @@ public class Position
 
     public bool IsActive { get; private set; }
 
-    public Position(string code, string name)
+    public Position(
+        string code,
+        string name)
     {
         Id = Guid.NewGuid();
-
         Code = code;
         Name = name;
-
         IsActive = true;
     }
 
-    public void Update(string code, string name)
+    public void Update(
+        string code,
+        string name)
     {
         Code = code;
         Name = name;
     }
 
-    public void Activate()
-    {
-        IsActive = true;
-    }
+    public void Activate() => IsActive = true;
 
-    public void Deactivate()
-    {
-        IsActive = false;
-    }
+    public void Deactivate() => IsActive = false;
 }
