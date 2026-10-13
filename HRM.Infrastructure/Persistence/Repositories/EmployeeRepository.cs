@@ -16,6 +16,8 @@ public class EmployeeRepository : IEmployeeRepository
     public async Task<Employee?> GetByIdAsync(Guid id)
     {
         return await _context.Employees
+            .Include(x => x.Department)
+            .Include(x => x.Position)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -31,6 +33,8 @@ public class EmployeeRepository : IEmployeeRepository
     {
         return await _context.Employees
             .AsNoTracking()
+            .Include(x => x.Department)
+            .Include(x => x.Position)
             .OrderBy(x => x.EmployeeNumber)
             .ToListAsync();
     }

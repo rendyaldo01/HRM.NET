@@ -35,5 +35,15 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 
         builder.Property(x => x.IsActive)
             .IsRequired();
+
+        builder.HasOne(x => x.Department)
+            .WithMany()
+            .HasForeignKey(x => x.DepartmentId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Position)
+            .WithMany()
+            .HasForeignKey(x => x.PositionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

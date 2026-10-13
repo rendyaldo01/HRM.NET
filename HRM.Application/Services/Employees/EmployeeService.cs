@@ -1,16 +1,25 @@
 using HRM.Application.DTOs.Employees;
 using HRM.Application.Interfaces.Repositories;
 using HRM.Domain.Entities;
+using HRM.Application.DTOs.Departments;
+using HRM.Application.DTOs.Positions;
 
 namespace HRM.Application.Services.Employees;
 
 public class EmployeeService : IEmployeeService
 {
     private readonly IEmployeeRepository _employeeRepository;
+    private readonly IDepartmentRepository _departmentRepository;
+    private readonly IPositionRepository _positionRepository;
 
-    public EmployeeService(IEmployeeRepository employeeRepository)
+    public EmployeeService(
+        IEmployeeRepository employeeRepository,
+        IDepartmentRepository departmentRepository,
+        IPositionRepository positionRepository)
     {
         _employeeRepository = employeeRepository;
+        _departmentRepository = departmentRepository;
+        _positionRepository = positionRepository;
     }
 
     public async Task<EmployeeDto?> GetByIdAsync(Guid id)
@@ -52,10 +61,14 @@ public class EmployeeService : IEmployeeService
             request.Email,
             request.HireDate);
 
+        employee.AssignDepartment(request.DepartmentId);
+        employee.AssignPosition(request.PositionId);
+
         await _employeeRepository.AddAsync(employee);
 
         return MapToDto(employee);
     }
+
 
     public async Task UpdateAsync(
         Guid id,
@@ -76,8 +89,12 @@ public class EmployeeService : IEmployeeService
             request.Email,
             request.HireDate);
 
+        employee.AssignDepartment(request.DepartmentId);
+        employee.AssignPosition(request.PositionId);
+
         await _employeeRepository.UpdateAsync(employee);
     }
+
 
     public async Task DeleteAsync(Guid id)
     {
@@ -138,7 +155,44 @@ public class EmployeeService : IEmployeeService
             LastName = employee.LastName,
             Email = employee.Email,
             HireDate = employee.HireDate,
+            DepartmentId = employee.DepartmentId,
+            DepartmentName = employee.Department?.Name,
+            PositionId = employee.PositionId,
+            PositionName = employee.Position?.Name,
             IsActive = employee.IsActive
         };
     }
+
+    public async Task<IReadOnlyList<DepartmentDto>> GetDepartmentsAsync()
+    {
+        var departments = await _departmentRepository.GetAllAsync();
+
+        return departments
+            .Where(department => department.IsActive)
+            .Select(department => new DepartmentDto
+            {
+                Id = department.Id,
+                Code = department.Code,
+                Name = department.Name,
+                IsActive = department.IsActive
+            })
+            .ToList();
+    }
+
+    public async Task<IReadOnlyList<PositionDto>> GetPositionsAsync()
+    {
+        var positions = await _positionRepository.GetAllAsync();
+
+        return positions
+            .Where(position => position.IsActive)
+            .Select(position => new PositionDto
+            {
+                Id = position.Id,
+                Code = position.Code,
+                Name = position.Name,
+                IsActive = position.IsActive
+            })
+            .ToList();
+    }
+
 }

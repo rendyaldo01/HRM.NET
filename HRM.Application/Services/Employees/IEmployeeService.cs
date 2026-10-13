@@ -1,19 +1,19 @@
+using HRM.Application.DTOs.Departments;
 using HRM.Application.DTOs.Employees;
+using HRM.Application.DTOs.Positions;
 
 namespace HRM.Application.Services.Employees;
 
 public interface IEmployeeService
 {
     Task<EmployeeDto?> GetByIdAsync(Guid id);
-
     Task<IReadOnlyList<EmployeeDto>> GetAllAsync();
-
     Task<EmployeeDto> CreateAsync(CreateEmployeeRequest request);
-
     Task UpdateAsync(Guid id, CreateEmployeeRequest request);
-
     Task DeleteAsync(Guid id);
     Task<int> GetCountAsync();
     Task ActivateAsync(Guid id);
     Task DeactivateAsync(Guid id);
+    Task<IReadOnlyList<DepartmentDto>> GetDepartmentsAsync();
+    Task<IReadOnlyList<PositionDto>> GetPositionsAsync();
 }

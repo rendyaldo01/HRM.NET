@@ -21,10 +21,12 @@ public class EmployeesController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
+        await LoadDepartmentAndPositionAsync();
         return View();
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -33,6 +35,7 @@ public class EmployeesController : Controller
     {
         if (!ModelState.IsValid)
         {
+            await LoadDepartmentAndPositionAsync();
             return View(request);
         }
 
@@ -46,11 +49,13 @@ public class EmployeesController : Controller
                 nameof(request.EmployeeNumber),
                 ex.Message);
 
+            await LoadDepartmentAndPositionAsync();
             return View(request);
         }
 
         return RedirectToAction(nameof(Index));
     }
+
 
     [HttpGet]
     public async Task<IActionResult> Details(Guid id)
@@ -81,20 +86,25 @@ public class EmployeesController : Controller
             FirstName = employee.FirstName,
             LastName = employee.LastName,
             Email = employee.Email,
-            HireDate = employee.HireDate
+            HireDate = employee.HireDate,
+            DepartmentId = employee.DepartmentId,
+            PositionId = employee.PositionId
         };
+        await LoadDepartmentAndPositionAsync();
 
         return View(request);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
-    Guid id,
-    CreateEmployeeRequest request)
+        Guid id,
+        CreateEmployeeRequest request)
     {
         if (!ModelState.IsValid)
         {
             ViewBag.EmployeeId = id;
+            await LoadDepartmentAndPositionAsync();
             return View(request);
         }
 
@@ -106,11 +116,20 @@ public class EmployeesController : Controller
         {
             return NotFound();
         }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(
+                nameof(request.EmployeeNumber),
+                ex.Message);
 
-        return RedirectToAction(
-            nameof(Details),
-            new { id });
+            ViewBag.EmployeeId = id;
+            await LoadDepartmentAndPositionAsync();
+            return View(request);
+        }
+
+        return RedirectToAction(nameof(Index));
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -143,4 +162,11 @@ public class EmployeesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    private async Task LoadDepartmentAndPositionAsync()
+    {
+        ViewBag.Departments = await _employeeService.GetDepartmentsAsync();
+        ViewBag.Positions = await _employeeService.GetPositionsAsync();
+    }
+
 }

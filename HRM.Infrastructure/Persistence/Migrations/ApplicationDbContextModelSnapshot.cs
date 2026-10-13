@@ -55,6 +55,9 @@ namespace HRM.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -81,10 +84,17 @@ namespace HRM.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<Guid?>("PositionId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("EmployeeNumber")
                         .IsUnique();
+
+                    b.HasIndex("PositionId");
 
                     b.ToTable("Employees", (string)null);
                 });
@@ -114,6 +124,23 @@ namespace HRM.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Positions", (string)null);
+                });
+
+            modelBuilder.Entity("HRM.Domain.Entities.Employee", b =>
+                {
+                    b.HasOne("HRM.Domain.Entities.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("HRM.Domain.Entities.Position", "Position")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Position");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,3 +1,4 @@
+
 namespace HRM.Domain.Entities;
 
 public class Employee
@@ -15,6 +16,14 @@ public class Employee
     public DateTime HireDate { get; private set; }
 
     public bool IsActive { get; private set; }
+
+    public Guid? DepartmentId { get; private set; }
+
+    public Department? Department { get; private set; }
+
+    public Guid? PositionId { get; private set; }
+
+    public Position? Position { get; private set; }
 
     public Employee(
         string employeeNumber,
@@ -44,6 +53,16 @@ public class Employee
         LastName = lastName;
         Email = email;
         HireDate = hireDate;
+    }
+
+    public void AssignDepartment(Guid? departmentId)
+    {
+        DepartmentId = departmentId;
+    }
+
+    public void AssignPosition(Guid? positionId)
+    {
+        PositionId = positionId;
     }
 
     public void Activate()
