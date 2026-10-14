@@ -54,6 +54,10 @@ public class EmployeeService : IEmployeeService
                 "Employee number already exists.");
         }
 
+        await ValidateDepartmentAndPositionAsync(
+        request.DepartmentId,
+        request.PositionId);
+
         var employee = new Employee(
             request.EmployeeNumber,
             request.FirstName,
@@ -82,6 +86,10 @@ public class EmployeeService : IEmployeeService
             throw new KeyNotFoundException(
                 "Employee not found.");
         }
+
+        await ValidateDepartmentAndPositionAsync(
+        request.DepartmentId,
+        request.PositionId);
 
         employee.Update(
             request.FirstName,
@@ -193,6 +201,47 @@ public class EmployeeService : IEmployeeService
                 IsActive = position.IsActive
             })
             .ToList();
+    }
+
+    private async Task ValidateDepartmentAndPositionAsync(
+        Guid? departmentId,
+        Guid? positionId)
+    {
+        if (departmentId.HasValue)
+        {
+            var department = await _departmentRepository
+                .GetByIdAsync(departmentId.Value);
+
+            if (department is null)
+            {
+                throw new InvalidOperationException(
+                    "Department yang dipilih tidak ditemukan.");
+            }
+
+            if (!department.IsActive)
+            {
+                throw new InvalidOperationException(
+                    "Department yang dipilih sudah tidak aktif.");
+            }
+        }
+
+        if (positionId.HasValue)
+        {
+            var position = await _positionRepository
+                .GetByIdAsync(positionId.Value);
+
+            if (position is null)
+            {
+                throw new InvalidOperationException(
+                    "Position yang dipilih tidak ditemukan.");
+            }
+
+            if (!position.IsActive)
+            {
+                throw new InvalidOperationException(
+                    "Position yang dipilih sudah tidak aktif.");
+            }
+        }
     }
 
 }

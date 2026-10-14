@@ -45,9 +45,7 @@ public class EmployeesController : Controller
         }
         catch (InvalidOperationException ex)
         {
-            ModelState.AddModelError(
-                nameof(request.EmployeeNumber),
-                ex.Message);
+            ModelState.AddModelError(string.Empty, ex.Message);
 
             await LoadDepartmentAndPositionAsync();
             return View(request);
@@ -118,9 +116,7 @@ public class EmployeesController : Controller
         }
         catch (InvalidOperationException ex)
         {
-            ModelState.AddModelError(
-                nameof(request.EmployeeNumber),
-                ex.Message);
+            ModelState.AddModelError(string.Empty, ex.Message);
 
             ViewBag.EmployeeId = id;
             await LoadDepartmentAndPositionAsync();
