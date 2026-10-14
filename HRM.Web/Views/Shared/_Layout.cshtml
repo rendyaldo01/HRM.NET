@@ -11,33 +11,112 @@
     <link rel="stylesheet" href="~/HRM.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HRM.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-3">
+            <div class="container-fluid px-4">
+
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold fs-4 me-5"
+                   asp-controller="Home"
+                   asp-action="Index">
+                    HRM<span class="text-primary">.Web</span>
+                </a>
+
+                <!-- Mobile Toggle -->
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+
+                    <!-- Navigation kiri -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Dashboard</a>
+                            <a class="nav-link px-3"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Dashboard
+                            </a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Employees" asp-action="Index">Employees</a>
+                            <a class="nav-link px-3"
+                               asp-controller="Employees"
+                               asp-action="Index">
+                                Employees
+                            </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Departments" asp-action="Index">Departments</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Positions" asp-action="Index">Positions</a>
-                        </li>
+
+
+                        @if (User.IsInRole("Admin HR"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link px-3"
+                                   asp-controller="Departments"
+                                   asp-action="Index">
+                                    Departments
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link px-3"
+                                   asp-controller="Positions"
+                                   asp-action="Index">
+                                    Positions
+                                </a>
+                            </li>
+                        }
+
+
                     </ul>
+
+                    <!-- User dan Logout kanan -->
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="d-flex flex-column flex-lg-row align-items-lg-center gap-3 mt-3 mt-lg-0">
+
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center"
+                                     style="width: 38px; height: 38px;">
+                                    <span class="fw-semibold">
+                                        @(User.Identity.Name?.Substring(0, 1).ToUpperInvariant() ?? "U")
+                                    </span>
+                                </div>
+
+                                <span class="fw-semibold text-dark">
+                                    @User.Identity.Name
+                                </span>
+                            </div>
+
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="m-0">
+                                @Html.AntiForgeryToken()
+
+                                <button type="submit"
+                                        class="btn btn-outline-danger px-3">
+                                    <span class="me-1">↪</span>
+                                    Logout
+                                </button>
+                            </form>
+
+                        </div>
+                    }
+
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

@@ -1,9 +1,11 @@
 using HRM.Application.DTOs.Employees;
 using HRM.Application.Services.Employees;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRM.Web.Controllers;
 
+[Authorize(Roles = "Admin HR,HR Staff,Viewer")]
 public class EmployeesController : Controller
 {
     private readonly IEmployeeService _employeeService;
@@ -20,6 +22,8 @@ public class EmployeesController : Controller
         return View(employees);
     }
 
+
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpGet]
     public async Task<IActionResult> Create()
     {
@@ -27,11 +31,10 @@ public class EmployeesController : Controller
         return View();
     }
 
-
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(
-        CreateEmployeeRequest request)
+    public async Task<IActionResult> Create(CreateEmployeeRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -68,6 +71,8 @@ public class EmployeesController : Controller
         return View(employee);
     }
 
+
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpGet]
     public async Task<IActionResult> Edit(Guid id)
     {
@@ -93,11 +98,11 @@ public class EmployeesController : Controller
         return View(request);
     }
 
+
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(
-        Guid id,
-        CreateEmployeeRequest request)
+    public async Task<IActionResult> Edit(Guid id, CreateEmployeeRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -127,6 +132,7 @@ public class EmployeesController : Controller
     }
 
 
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Deactivate(Guid id)
@@ -143,6 +149,7 @@ public class EmployeesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin HR,HR Staff")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Activate(Guid id)

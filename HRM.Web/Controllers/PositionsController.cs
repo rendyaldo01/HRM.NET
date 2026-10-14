@@ -1,9 +1,11 @@
 ﻿using HRM.Application.DTOs.Positions;
 using HRM.Application.Services.Positions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRM.Web.Controllers;
 
+[Authorize(Roles = "Admin HR")]
 public class PositionsController : Controller
 {
     private readonly IPositionService _positionService;

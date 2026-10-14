@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<div class="container py-5">
+    <div class="text-center">
+        <h1 class="display-5 text-danger">403</h1>
+        <h2 class="mb-3">Access Denied</h2>
+
+        <p class="text-secondary">
+            Maaf, kamu tidak memiliki izin untuk mengakses halaman ini.
+        </p>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="btn btn-primary mt-3">
+            Kembali ke Dashboard
+        </a>
+    </div>
+</div>

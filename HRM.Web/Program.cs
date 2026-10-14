@@ -1,5 +1,6 @@
 using HRM.Application;
 using HRM.Infrastructure;
+using HRM.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,10 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+await IdentitySeeder.SeedAsync(
+    app.Services,
+    app.Configuration);
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -23,6 +28,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseAuthorization();
 

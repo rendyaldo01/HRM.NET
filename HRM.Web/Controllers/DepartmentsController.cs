@@ -1,9 +1,11 @@
 ﻿using HRM.Application.DTOs.Departments;
 using HRM.Application.Services.Departments;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRM.Web.Controllers;
 
+[Authorize(Roles = "Admin HR")]
 public class DepartmentsController : Controller
 {
     private readonly IDepartmentService _departmentService;
