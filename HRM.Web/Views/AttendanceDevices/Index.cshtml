@@ -1,0 +1,80 @@
+@model IReadOnlyList<HRM.Application.DTOs.AttendanceDevices.AttendanceDeviceListDto>
+
+@{
+    ViewData["Title"] = "Attendance Devices";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Attendance Devices</h2>
+        <p class="text-muted mb-0">
+            Daftar perangkat yang terdaftar untuk sistem absensi.
+        </p>
+    </div>
+    <span class="badge bg-primary fs-6">
+        Total: @Model.Count
+    </span>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <h5>Belum Ada Device</h5>
+                <p class="text-muted mb-0">
+                    Belum ada perangkat absensi yang terdaftar.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Device Code</th>
+                            <th>Device Name</th>
+                            <th>Status</th>
+                            <th>Registered At (UTC)</th>
+                            <th>Device ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var device in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">
+                                    @device.DeviceCode
+                                </td>
+                                <td>@device.Name</td>
+                                <td>
+                                    @if (device.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @device.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm:ss")
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        @device.Id
+                                    </small>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -21,4 +21,8 @@ public interface IAttendanceEventRepository
         DateTime fromUtc,
         DateTime toUtc);
 
+    Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
+        DateTime fromUtc,
+        DateTime toUtc);
+
 }

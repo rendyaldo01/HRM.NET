@@ -1,0 +1,120 @@
+@model IReadOnlyList<HRM.Application.DTOs.AttendanceEvents.AttendanceEventHistoryDto>
+
+@{
+    ViewData["Title"] = "Attendance History";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Attendance History</h2>
+        <p class="text-muted mb-0">
+            Riwayat tap kartu RFID seluruh karyawan.
+        </p>
+    </div>
+
+    <span class="badge bg-primary fs-6">
+        Total: @Model.Count
+    </span>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get"
+              asp-controller="AttendanceHistory"
+              asp-action="Index">
+
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="fromDate" class="form-label">
+                        From Date
+                    </label>
+                    <input type="date"
+                           id="fromDate"
+                           name="fromDate"
+                           class="form-control"
+                           value="@ViewBag.FromDate"
+                           required />
+                </div>
+
+                <div class="col-md-4">
+                    <label for="toDate" class="form-label">
+                        To Date
+                    </label>
+                    <input type="date"
+                           id="toDate"
+                           name="toDate"
+                           class="form-control"
+                           value="@ViewBag.ToDate"
+                           required />
+                </div>
+
+                <div class="col-md-4">
+                    <button type="submit"
+                            class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i>
+                        Filter
+                    </button>
+
+                    <a asp-controller="AttendanceHistory"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Today
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <h5>No Attendance Records</h5>
+                <p class="text-muted mb-0">
+                    Tidak ada data absensi pada rentang tanggal ini.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Employee Number</th>
+                            <th>Employee Name</th>
+                            <th>Card UID</th>
+                            <th>Occurred At (UTC)</th>
+                            <th>Received At (UTC)</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-semibold">
+                                    @item.EmployeeNumber
+                                </td>
+                                <td>@item.EmployeeName</td>
+                                <td>
+                                    <code>@item.CardUid</code>
+                                </td>
+                                <td>
+                                    @item.OccurredAtUtc.ToString(
+                                    "yyyy-MM-dd HH:mm:ss")
+                        </td>
+                        <td>
+                            @item.ReceivedAtUtc.ToString(
+                                                        "yyyy-MM-dd HH:mm:ss")
+                        </td>
+                    </tr>
+                                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

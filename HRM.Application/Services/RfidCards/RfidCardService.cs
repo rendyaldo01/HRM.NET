@@ -1,5 +1,4 @@
-﻿
-using HRM.Application.DTOs.RfidCards;
+﻿using HRM.Application.DTOs.RfidCards;
 using HRM.Application.Interfaces.Repositories;
 using HRM.Application.Services.Employees;
 using HRM.Domain.Entities;
@@ -37,6 +36,13 @@ public class RfidCardService : IRfidCardService
             .GetByCardUidAsync(cardUid);
 
         return card == null ? null : MapToDto(card);
+    }
+
+    public async Task<IReadOnlyList<RfidCardDto>> GetAllAsync()
+    {
+        var cards = await _rfidCardRepository.GetAllAsync();
+
+        return cards.Select(MapToDto).ToList();
     }
 
     public async Task<IReadOnlyList<RfidCardDto>> GetAllByEmployeeIdAsync(

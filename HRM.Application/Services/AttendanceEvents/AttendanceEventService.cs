@@ -55,9 +55,9 @@ public sealed class AttendanceEventService: IAttendanceEventService
     }
 
     public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetHistoryByEmployeeAsync(
-Guid employeeId,
-DateTime fromUtc,
-DateTime toUtc)
+        Guid employeeId,
+        DateTime fromUtc,
+        DateTime toUtc)
     {
         if (employeeId == Guid.Empty)
         {
@@ -86,4 +86,28 @@ DateTime toUtc)
                 toUtc);
 
     }
+
+
+    public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
+        DateTime fromUtc,
+        DateTime toUtc)
+    {
+        if (fromUtc.Kind != DateTimeKind.Utc ||
+            toUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException(
+                "Date range must be in UTC.");
+        }
+
+        if (fromUtc >= toUtc)
+        {
+            throw new ArgumentException(
+                "The start date must be earlier than the end date.");
+        }
+
+        return await _attendanceEventRepository.GetAllHistoryAsync(
+            fromUtc,
+            toUtc);
+    }
+
 }

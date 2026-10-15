@@ -1,0 +1,80 @@
+@model IReadOnlyList<HRM.Application.DTOs.RfidCards.RfidCardDto>
+
+@{
+    ViewData["Title"] = "RFID Cards";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">RFID Cards</h2>
+        <p class="text-muted mb-0">
+            Daftar kartu RFID dan karyawan pemiliknya.
+        </p>
+    </div>
+
+    <span class="badge bg-primary fs-6">
+        Total: @Model.Count
+    </span>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        @if (Model.Count == 0)
+        {
+            <div class="text-center py-5">
+                <h5>Belum Ada RFID Card</h5>
+                <p class="text-muted mb-0">
+                    Belum ada kartu RFID yang terdaftar.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Card UID</th>
+                            <th>Employee Number</th>
+                            <th>Employee Name</th>
+                            <th>Status</th>
+                            <th>Registered At (UTC)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var card in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <code>@card.CardUid</code>
+                                </td>
+                                <td class="fw-semibold">
+                                    @card.EmployeeNumber
+                                </td>
+                                <td>@card.EmployeeName</td>
+                                <td>
+                                    @if (card.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            Inactive
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    @card.CreatedAtUtc.ToString(
+                                    "yyyy-MM-dd HH:mm:ss")
+                        </td>
+                    </tr>
+                                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

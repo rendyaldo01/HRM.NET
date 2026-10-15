@@ -14,6 +14,8 @@ public interface IRfidCardRepository
     Task<IReadOnlyList<RfidCard>> GetAllByEmployeeIdAsync(
         Guid employeeId);
 
+    Task<IReadOnlyList<RfidCard>> GetAllAsync();
+
     Task AddAsync(RfidCard rfidCard);
 
     Task UpdateAsync(RfidCard rfidCard);

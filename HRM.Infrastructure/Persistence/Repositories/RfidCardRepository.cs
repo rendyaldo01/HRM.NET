@@ -48,6 +48,15 @@ public class RfidCardRepository : IRfidCardRepository
             .ToListAsync();
     }
 
+    public async Task<IReadOnlyList<RfidCard>> GetAllAsync()
+    {
+        return await _context.RfidCards
+            .AsNoTracking()
+            .Include(x => x.Employee)
+            .OrderBy(x => x.CardUid)
+            .ToListAsync();
+    }
+
     public async Task AddAsync(RfidCard rfidCard)
     {
         await _context.RfidCards.AddAsync(rfidCard);

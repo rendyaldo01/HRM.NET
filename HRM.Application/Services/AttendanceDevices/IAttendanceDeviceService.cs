@@ -4,6 +4,8 @@ namespace HRM.Application.Services.AttendanceDevices;
 
 public interface IAttendanceDeviceService
 {
+    Task<IReadOnlyList<AttendanceDeviceListDto>> GetAllAsync();
+
     Task<AttendanceDeviceRegistrationDto> RegisterAsync(
         RegisterAttendanceDeviceRequest request);
 

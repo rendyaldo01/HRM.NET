@@ -94,4 +94,33 @@ public sealed class AttendanceEventRepository : IAttendanceEventRepository
         })
         .ToListAsync();
     }
+
+
+    public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
+        DateTime fromUtc,
+        DateTime toUtc)
+    {
+        return await (
+            from attendance in _context.AttendanceEvents.AsNoTracking()
+            join card in _context.RfidCards.AsNoTracking()
+                on attendance.CardUid equals card.CardUid
+            join employee in _context.Employees.AsNoTracking()
+                on card.EmployeeId equals employee.Id
+            where attendance.OccurredAtUtc >= fromUtc
+                && attendance.OccurredAtUtc < toUtc
+            orderby attendance.OccurredAtUtc descending
+            select new AttendanceEventHistoryDto
+            {
+                Id = attendance.Id,
+                EmployeeNumber = employee.EmployeeNumber,
+                EmployeeName = (
+                    employee.FirstName + " " + employee.LastName
+                ).Trim(),
+                CardUid = attendance.CardUid,
+                OccurredAtUtc = attendance.OccurredAtUtc,
+                ReceivedAtUtc = attendance.ReceivedAtUtc
+            })
+            .ToListAsync();
+    }
+
 }

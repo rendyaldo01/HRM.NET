@@ -1,5 +1,4 @@
-﻿
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using HRM.Application.DTOs.AttendanceDevices;
 using HRM.Application.Interfaces.Repositories;
 using HRM.Domain.Entities;
@@ -14,6 +13,20 @@ public class AttendanceDeviceService : IAttendanceDeviceService
         IAttendanceDeviceRepository deviceRepository)
     {
         _deviceRepository = deviceRepository;
+    }
+
+    public async Task<IReadOnlyList<AttendanceDeviceListDto>> GetAllAsync()
+    {
+        var devices = await _deviceRepository.GetAllAsync();
+
+        return devices.Select(device => new AttendanceDeviceListDto
+        {
+            Id = device.Id,
+            DeviceCode = device.DeviceCode,
+            Name = device.Name,
+            IsActive = device.IsActive,
+            CreatedAtUtc = device.CreatedAtUtc
+        }).ToList();
     }
 
     public async Task<AttendanceDeviceRegistrationDto> RegisterAsync(
