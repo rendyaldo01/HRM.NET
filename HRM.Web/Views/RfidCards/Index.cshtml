@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "RFID Cards";
+
+    var jakartaTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+        OperatingSystem.IsWindows()
+            ? "SE Asia Standard Time"
+            : "Asia/Jakarta");
+
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,7 +44,7 @@
                             <th>Employee Number</th>
                             <th>Employee Name</th>
                             <th>Status</th>
-                            <th>Registered At (UTC)</th>
+                            <th>Registered At (WIB)</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,11 +73,12 @@
                                     }
                                 </td>
                                 <td>
-                                    @card.CreatedAtUtc.ToString(
-                                    "yyyy-MM-dd HH:mm:ss")
-                        </td>
-                    </tr>
-                                        }
+                                    @TimeZoneInfo.ConvertTimeFromUtc(
+                                        DateTime.SpecifyKind(card.CreatedAtUtc, DateTimeKind.Utc),
+                                        jakartaTimeZone).ToString("dd/MM/yyyy HH:mm:ss")
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>

@@ -15,6 +15,7 @@ public interface IAttendanceEventService
 
     Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
         DateTime fromUtc,
-        DateTime toUtc);
+        DateTime toUtc,
+        string? searchTerm);
 
 }

@@ -96,11 +96,13 @@ public sealed class AttendanceEventRepository : IAttendanceEventRepository
     }
 
 
+
     public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
         DateTime fromUtc,
-        DateTime toUtc)
+        DateTime toUtc,
+        string? searchTerm)
     {
-        return await (
+        var query =
             from attendance in _context.AttendanceEvents.AsNoTracking()
             join card in _context.RfidCards.AsNoTracking()
                 on attendance.CardUid equals card.CardUid
@@ -108,19 +110,37 @@ public sealed class AttendanceEventRepository : IAttendanceEventRepository
                 on card.EmployeeId equals employee.Id
             where attendance.OccurredAtUtc >= fromUtc
                 && attendance.OccurredAtUtc < toUtc
-            orderby attendance.OccurredAtUtc descending
-            select new AttendanceEventHistoryDto
+            select new
             {
-                Id = attendance.Id,
-                EmployeeNumber = employee.EmployeeNumber,
+                Attendance = attendance,
+                Employee = employee
+            };
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.Trim();
+
+            query = query.Where(x =>
+                x.Employee.EmployeeNumber.Contains(term) ||
+                (x.Employee.FirstName + " " + x.Employee.LastName)
+                    .Contains(term));
+        }
+
+        return await query
+            .OrderByDescending(x => x.Attendance.OccurredAtUtc)
+            .Select(x => new AttendanceEventHistoryDto
+            {
+                Id = x.Attendance.Id,
+                EmployeeNumber = x.Employee.EmployeeNumber,
                 EmployeeName = (
-                    employee.FirstName + " " + employee.LastName
+                    x.Employee.FirstName + " " + x.Employee.LastName
                 ).Trim(),
-                CardUid = attendance.CardUid,
-                OccurredAtUtc = attendance.OccurredAtUtc,
-                ReceivedAtUtc = attendance.ReceivedAtUtc
+                CardUid = x.Attendance.CardUid,
+                OccurredAtUtc = x.Attendance.OccurredAtUtc,
+                ReceivedAtUtc = x.Attendance.ReceivedAtUtc
             })
             .ToListAsync();
     }
+
 
 }

@@ -2,6 +2,12 @@
 
 @{
     ViewData["Title"] = "Attendance History";
+
+    var jakartaTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+        OperatingSystem.IsWindows()
+            ? "SE Asia Standard Time"
+            : "Asia/Jakarta");
+
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -48,6 +54,20 @@
                            required />
                 </div>
 
+
+                <div class="col-md-4">
+                    <label for="searchTerm" class="form-label">
+                        Employee Search
+                    </label>
+                    <input type="text"
+                           id="searchTerm"
+                           name="searchTerm"
+                           class="form-control"
+                           placeholder="Employee Number or Name"
+                           value="@ViewBag.SearchTerm" />
+                </div>
+
+
                 <div class="col-md-4">
                     <button type="submit"
                             class="btn btn-primary me-2">
@@ -86,8 +106,8 @@
                             <th>Employee Number</th>
                             <th>Employee Name</th>
                             <th>Card UID</th>
-                            <th>Occurred At (UTC)</th>
-                            <th>Received At (UTC)</th>
+                            <th>Occurred At (WIB)</th>
+                            <th>Received At (WIB)</th>
                         </tr>
                     </thead>
 
@@ -103,15 +123,18 @@
                                     <code>@item.CardUid</code>
                                 </td>
                                 <td>
-                                    @item.OccurredAtUtc.ToString(
-                                    "yyyy-MM-dd HH:mm:ss")
-                        </td>
-                        <td>
-                            @item.ReceivedAtUtc.ToString(
-                                                        "yyyy-MM-dd HH:mm:ss")
-                        </td>
-                    </tr>
-                                        }
+                                    @TimeZoneInfo.ConvertTimeFromUtc(
+                                    DateTime.SpecifyKind(item.OccurredAtUtc, DateTimeKind.Utc),
+                                    jakartaTimeZone).ToString("dd/MM/yyyy HH:mm:ss")
+
+                                </td>
+                                <td>
+                                    @TimeZoneInfo.ConvertTimeFromUtc(
+                                    DateTime.SpecifyKind(item.ReceivedAtUtc, DateTimeKind.Utc),
+                                    jakartaTimeZone).ToString("dd/MM/yyyy HH:mm:ss")
+                                </td>
+                            </tr>
+                            }
                     </tbody>
                 </table>
             </div>

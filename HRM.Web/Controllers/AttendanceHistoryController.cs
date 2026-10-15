@@ -17,8 +17,9 @@ public class AttendanceHistoryController : Controller
 
     [HttpGet]
     public async Task<IActionResult> Index(
-        DateTime? fromDate,
-        DateTime? toDate)
+            DateTime? fromDate,
+            DateTime? toDate,
+            string? searchTerm)
     {
         var jakartaTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
             OperatingSystem.IsWindows()
@@ -51,12 +52,15 @@ public class AttendanceHistoryController : Controller
 
         var history = await _attendanceEventService.GetAllHistoryAsync(
             fromUtc,
-            toUtc);
+            toUtc,
+            searchTerm);
 
         ViewBag.FromDate = startDate.ToString("yyyy-MM-dd");
         ViewBag.ToDate = endDate.ToString("yyyy-MM-dd");
+        ViewBag.SearchTerm = searchTerm;
 
         return View(history);
+
     }
 
 }

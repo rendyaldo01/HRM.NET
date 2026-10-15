@@ -88,9 +88,11 @@ public sealed class AttendanceEventService: IAttendanceEventService
     }
 
 
+
     public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
         DateTime fromUtc,
-        DateTime toUtc)
+        DateTime toUtc,
+        string? searchTerm)
     {
         if (fromUtc.Kind != DateTimeKind.Utc ||
             toUtc.Kind != DateTimeKind.Utc)
@@ -107,7 +109,8 @@ public sealed class AttendanceEventService: IAttendanceEventService
 
         return await _attendanceEventRepository.GetAllHistoryAsync(
             fromUtc,
-            toUtc);
+            toUtc,
+            searchTerm);
     }
 
 }
