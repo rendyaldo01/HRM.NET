@@ -1,16 +1,23 @@
 using HRM.Application;
 using HRM.Infrastructure;
 using HRM.Infrastructure.Identity;
+using HRM.Web.Security;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 
-builder.Services.AddInfrastructure(
-    builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions, AttendanceDeviceAuthenticationHandler>(
+        "AttendanceDevice",
+        options => { });
 
 var app = builder.Build();
 
@@ -29,8 +36,13 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
 app.UseAuthentication();
-app.UseAuthorization();
 
 app.UseAuthorization();
 

@@ -1,10 +1,11 @@
 using HRM.Application.Interfaces.Repositories;
 using HRM.Infrastructure.Persistence;
 using HRM.Infrastructure.Persistence.Repositories;
+using HRM.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
 
 namespace HRM.Infrastructure;
 
@@ -23,6 +24,9 @@ public static class DependencyInjection
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IPositionRepository, PositionRepository>();
+        services.AddScoped<IRfidCardRepository, RfidCardRepository>();
+        services.AddScoped<IAttendanceDeviceRepository, AttendanceDeviceRepository>();
+        services.AddScoped<IAttendanceEventRepository,AttendanceEventRepository>();
 
         return services;
     }
