@@ -8,7 +8,7 @@ namespace HRM.Web.Controllers.Api;
 
 [ApiController]
 [Route("api/attendance/events")]
-[Authorize(AuthenticationSchemes = "AttendanceDevice")]
+[Authorize]
 public sealed class AttendanceEventsController : ControllerBase
 {
     private readonly IAttendanceEventService _attendanceEventService;
@@ -20,6 +20,7 @@ public sealed class AttendanceEventsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = "AttendanceDevice")]
     public async Task<IActionResult> Record(
         [FromBody] RecordAttendanceEventRequest request)
     {
@@ -55,6 +56,55 @@ public sealed class AttendanceEventsController : ControllerBase
             });
         }
         catch (InvalidOperationException ex)
+        {
+            return BadRequest(new
+            {
+                message = ex.Message
+            });
+        }
+    }
+
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = "Identity.Application",Roles = "Admin HR,HR Staff")]
+    public async Task<IActionResult> GetHistory(
+        [FromQuery] Guid employeeId,
+        [FromQuery] DateTimeOffset from,
+        [FromQuery] DateTimeOffset to)
+    {
+        if (employeeId == Guid.Empty)
+        {
+            return BadRequest(new
+            {
+                message = "Employee ID is required."
+            });
+        }
+
+        if (from >= to)
+        {
+            return BadRequest(new
+            {
+                message = "The 'from' date must be earlier than the 'to' date."
+            });
+        }
+
+        try
+        {
+            var history = await _attendanceEventService
+                .GetHistoryByEmployeeAsync(
+                    employeeId,
+                    from.UtcDateTime,
+                    to.UtcDateTime);
+
+            return Ok(new
+            {
+                employeeId,
+                fromUtc = from.UtcDateTime,
+                toUtc = to.UtcDateTime,
+                total = history.Count,
+                data = history
+            });
+        }
+        catch (ArgumentException ex)
         {
             return BadRequest(new
             {

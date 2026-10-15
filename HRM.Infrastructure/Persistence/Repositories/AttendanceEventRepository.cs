@@ -1,12 +1,12 @@
-﻿using HRM.Application.Interfaces.Repositories;
+﻿using HRM.Application.DTOs.AttendanceEvents;
+using HRM.Application.Interfaces.Repositories;
 using HRM.Domain.Entities;
 using HRM.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace HRM.Infrastructure.Repositories;
 
-public sealed class AttendanceEventRepository
-    : IAttendanceEventRepository
+public sealed class AttendanceEventRepository : IAttendanceEventRepository
 {
     private readonly ApplicationDbContext _context;
 
@@ -66,5 +66,32 @@ public sealed class AttendanceEventRepository
             .AnyAsync(x =>
                 x.DeviceId == deviceId &&
                 x.EventId == eventId);
+    }
+
+    public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetHistoryByEmployeeAsync(
+        Guid employeeId,
+        DateTime fromUtc,
+        DateTime toUtc)
+    {
+        return await (
+        from attendance in _context.AttendanceEvents.AsNoTracking()
+        join card in _context.RfidCards.AsNoTracking()
+        on attendance.CardUid equals card.CardUid
+        join employee in _context.Employees.AsNoTracking()
+        on card.EmployeeId equals employee.Id
+        where employee.Id == employeeId
+        && attendance.OccurredAtUtc >= fromUtc
+        && attendance.OccurredAtUtc < toUtc
+        orderby attendance.OccurredAtUtc descending
+        select new AttendanceEventHistoryDto
+        {
+            Id = attendance.Id,
+            EmployeeNumber = employee.EmployeeNumber,
+            EmployeeName = (employee.FirstName + " " + employee.LastName).Trim(),
+            CardUid = attendance.CardUid,
+            OccurredAtUtc = attendance.OccurredAtUtc,
+            ReceivedAtUtc = attendance.ReceivedAtUtc
+        })
+        .ToListAsync();
     }
 }
