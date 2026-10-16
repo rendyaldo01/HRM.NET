@@ -89,16 +89,18 @@ public sealed class AttendanceEventService: IAttendanceEventService
 
 
 
+
     public async Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
         DateTime fromUtc,
         DateTime toUtc,
-        string? searchTerm)
+        string? searchTerm,
+        int page,
+        int pageSize)
     {
         if (fromUtc.Kind != DateTimeKind.Utc ||
             toUtc.Kind != DateTimeKind.Utc)
         {
-            throw new ArgumentException(
-                "Date range must be in UTC.");
+            throw new ArgumentException("Date range must be in UTC.");
         }
 
         if (fromUtc >= toUtc)
@@ -107,10 +109,50 @@ public sealed class AttendanceEventService: IAttendanceEventService
                 "The start date must be earlier than the end date.");
         }
 
+        if (page < 1)
+        {
+            throw new ArgumentOutOfRangeException(nameof(page));
+        }
+
+        if (pageSize < 1 || pageSize > 100)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(pageSize),
+                "Page size must be between 1 and 100.");
+        }
+
         return await _attendanceEventRepository.GetAllHistoryAsync(
+            fromUtc,
+            toUtc,
+            searchTerm,
+            page,
+            pageSize);
+    }
+
+
+
+    public async Task<int> CountAllHistoryAsync(
+        DateTime fromUtc,
+        DateTime toUtc,
+        string? searchTerm)
+    {
+        if (fromUtc.Kind != DateTimeKind.Utc ||
+            toUtc.Kind != DateTimeKind.Utc)
+        {
+            throw new ArgumentException("Date range must be in UTC.");
+        }
+
+        if (fromUtc >= toUtc)
+        {
+            throw new ArgumentException(
+                "The start date must be earlier than the end date.");
+        }
+
+        return await _attendanceEventRepository.CountAllHistoryAsync(
             fromUtc,
             toUtc,
             searchTerm);
     }
+
 
 }

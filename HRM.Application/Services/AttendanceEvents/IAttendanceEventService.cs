@@ -13,7 +13,15 @@ public interface IAttendanceEventService
         DateTime fromUtc,
         DateTime toUtc);
 
+
     Task<IReadOnlyList<AttendanceEventHistoryDto>> GetAllHistoryAsync(
+        DateTime fromUtc,
+        DateTime toUtc,
+        string? searchTerm,
+        int page,
+        int pageSize);
+
+    Task<int> CountAllHistoryAsync(
         DateTime fromUtc,
         DateTime toUtc,
         string? searchTerm);

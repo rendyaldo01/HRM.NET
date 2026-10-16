@@ -8,6 +8,20 @@
             ? "SE Asia Standard Time"
             : "Asia/Jakarta");
 
+    int currentPage = ViewBag.CurrentPage ?? 1;
+    int pageSize = ViewBag.PageSize ?? 10;
+    int totalRecords = ViewBag.TotalRecords ?? 0;
+    int totalPages = ViewBag.TotalPages ?? 0;
+
+    string fromDate = ViewBag.FromDate ?? "";
+    string toDate = ViewBag.ToDate ?? "";
+    string searchTerm = ViewBag.SearchTerm ?? "";
+
+    int firstRecord = totalRecords == 0
+        ? 0
+        : ((currentPage - 1) * pageSize) + 1;
+
+    int lastRecord = Math.Min(currentPage * pageSize, totalRecords);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -19,7 +33,7 @@
     </div>
 
     <span class="badge bg-primary fs-6">
-        Total: @Model.Count
+        Total: @totalRecords
     </span>
 </div>
 
@@ -30,7 +44,7 @@
               asp-action="Index">
 
             <div class="row g-3 align-items-end">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="fromDate" class="form-label">
                         From Date
                     </label>
@@ -38,11 +52,11 @@
                            id="fromDate"
                            name="fromDate"
                            class="form-control"
-                           value="@ViewBag.FromDate"
+                           value="@fromDate"
                            required />
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="toDate" class="form-label">
                         To Date
                     </label>
@@ -50,10 +64,9 @@
                            id="toDate"
                            name="toDate"
                            class="form-control"
-                           value="@ViewBag.ToDate"
+                           value="@toDate"
                            required />
                 </div>
-
 
                 <div class="col-md-4">
                     <label for="searchTerm" class="form-label">
@@ -64,11 +77,35 @@
                            name="searchTerm"
                            class="form-control"
                            placeholder="Employee Number or Name"
-                           value="@ViewBag.SearchTerm" />
+                           value="@searchTerm" />
                 </div>
 
+                <div class="col-md-2">
+                    <label for="pageSize" class="form-label">
+                        Rows
+                    </label>
+                    <select id="pageSize"
+                            name="pageSize"
+                            class="form-select">
+                        @foreach (var size in new[] { 10, 25, 50, 100 })
+                        {
+                            if (pageSize == size)
+                            {
+                                <option value="@size" selected>
+                                    @size
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="@size">
+                                    @size
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
 
-                <div class="col-md-4">
+                <div class="col-12">
                     <button type="submit"
                             class="btn btn-primary me-2">
                         <i class="bi bi-search"></i>
@@ -99,6 +136,16 @@
         }
         else
         {
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <span class="text-muted">
+                    Menampilkan @firstRecord–@lastRecord dari @totalRecords records
+                </span>
+
+                <span class="text-muted">
+                    Halaman @currentPage dari @totalPages
+                </span>
+            </div>
+
             <div class="table-responsive">
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
@@ -124,20 +171,88 @@
                                 </td>
                                 <td>
                                     @TimeZoneInfo.ConvertTimeFromUtc(
-                                    DateTime.SpecifyKind(item.OccurredAtUtc, DateTimeKind.Utc),
-                                    jakartaTimeZone).ToString("dd/MM/yyyy HH:mm:ss")
-
-                                </td>
-                                <td>
-                                    @TimeZoneInfo.ConvertTimeFromUtc(
-                                    DateTime.SpecifyKind(item.ReceivedAtUtc, DateTimeKind.Utc),
-                                    jakartaTimeZone).ToString("dd/MM/yyyy HH:mm:ss")
-                                </td>
-                            </tr>
-                            }
+                                    DateTime.SpecifyKind(
+                                    item.OccurredAtUtc,
+                                    DateTimeKind.Utc),
+                                                        jakartaTimeZone
+                                                        ).ToString("dd/MM/yyyy HH:mm:ss")
+                        </td>
+                        <td>
+                            @TimeZoneInfo.ConvertTimeFromUtc(
+                                                        DateTime.SpecifyKind(
+                                                        item.ReceivedAtUtc,
+                                                        DateTimeKind.Utc),
+                                                        jakartaTimeZone
+                                                        ).ToString("dd/MM/yyyy HH:mm:ss")
+                        </td>
+                    </tr>
+                                        }
                     </tbody>
                 </table>
             </div>
+
+            @if (totalPages > 1)
+            {
+                <nav aria-label="Attendance history pagination"
+                     class="mt-4">
+                    <ul class="pagination justify-content-center flex-wrap">
+
+                        <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                            @if (currentPage > 1)
+                            {
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-fromDate="@fromDate"
+                                   asp-route-toDate="@toDate"
+                                   asp-route-searchTerm="@searchTerm"
+                                   asp-route-page="@(currentPage - 1)"
+                                   asp-route-pageSize="@pageSize">
+                                    Previous
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="page-link">Previous</span>
+                            }
+                        </li>
+
+                        @for (int p = 1; p <= totalPages; p++)
+                        {
+                            <li class="page-item @(p == currentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-fromDate="@fromDate"
+                                   asp-route-toDate="@toDate"
+                                   asp-route-searchTerm="@searchTerm"
+                                   asp-route-page="@p"
+                                   asp-route-pageSize="@pageSize">
+                                    @p
+                                </a>
+                            </li>
+                        }
+
+                        <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                            @if (currentPage < totalPages)
+                            {
+                                <a class="page-link"
+                                   asp-action="Index"
+                                   asp-route-fromDate="@fromDate"
+                                   asp-route-toDate="@toDate"
+                                   asp-route-searchTerm="@searchTerm"
+                                   asp-route-page="@(currentPage + 1)"
+                                   asp-route-pageSize="@pageSize">
+                                    Next
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="page-link">Next</span>
+                            }
+                        </li>
+
+                    </ul>
+                </nav>
+            }
         }
     </div>
 </div>
